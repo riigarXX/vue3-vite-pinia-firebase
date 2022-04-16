@@ -6,10 +6,8 @@
 </template>
 
 <script setup>
-import Form from "../components/Form.vue"
-
+import Form from "../components/Form.vue";
 </script>
 
 <style>
-
 </style>

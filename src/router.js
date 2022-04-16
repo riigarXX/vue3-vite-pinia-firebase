@@ -9,7 +9,7 @@ import Register from "./views/Register.vue";
 const requireAuth = async (to, front, next) => {
   //Se inicializa la store dentro por que si no da problemas
   const userStore = useUserStore();
-  userStore.loadingSession = true
+  userStore.loadingSession = true;
   const user = await userStore.currentUser();
 
   if (user) {
@@ -17,14 +17,19 @@ const requireAuth = async (to, front, next) => {
   } else {
     next("/login");
   }
-  userStore.loadingSession = false
+  userStore.loadingSession = false;
 };
 
 const routes = [
-  { path: "/", component: Home, beforeEnter: requireAuth },
-  { path: "/editar/:id", component: Editar, beforeEnter: requireAuth },
-  { path: "/login", component: Login },
-  { path: "/register", component: Register },
+  { path: "/", component: Home, beforeEnter: requireAuth, name: "home" },
+  {
+    path: "/editar/:id",
+    component: Editar,
+    beforeEnter: requireAuth,
+    name: "editar",
+  },
+  { path: "/login", component: Login, name: "login" },
+  { path: "/register", component: Register, name: "register" },
 ];
 
 const router = createRouter({
