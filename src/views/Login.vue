@@ -26,7 +26,7 @@ import { useUserStore } from "../stores/user";
 
 const userStore = useUserStore();
 
-const email = ref("alopez@elclubdelaradio.com");
+const email = ref("");
 const password = ref("");
 
 const handleSubmit = async () => {
