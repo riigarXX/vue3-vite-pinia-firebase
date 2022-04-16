@@ -64,18 +64,10 @@ const formState = reactive({
   password: "",
 });
 
-const handleSubmit = async () => {
-  if (!email.value || password.value.length < 5) {
-    return alert("llena los campos");
-  }
+const onFinish = async (values) => {
   await userStore.loginUser(formState.email, formState.password);
 };
-const onFinish = async (values) => {
-  console.log("Success", values);
-};
-const onFinishFailed = async (values) => {
-  console.log("Failed", values);
-};
+const onFinishFailed = async (values) => {};
 </script>
 
 <style lang="scss" scoped>
