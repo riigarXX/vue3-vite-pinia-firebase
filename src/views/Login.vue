@@ -1,6 +1,7 @@
 <template>
   <a-row>
-    <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
+    <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }" align="center">
+      <h1>Login</h1>
       <a-form
         name="basicLogin"
         layout="vertical"

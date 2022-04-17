@@ -2,8 +2,6 @@
   <a-row>
     <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }" align="center">
       <h1>Register</h1>
-    </a-col>
-    <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
       <a-form
         name="basicRegister"
         layout="vertical"

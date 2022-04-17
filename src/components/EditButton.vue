@@ -8,7 +8,9 @@ const router = useRouter();
 
 <template>
   <div>
-    <button @click="router.push(`/editar/${idItem}`)">Editar</button>
+    <a-button @click="router.push(`/editar/${idItem}`)" type="primary"
+      >Editar</a-button
+    >
   </div>
 </template>
 

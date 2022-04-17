@@ -13,13 +13,13 @@ import { nanoid } from "nanoid";
 import { defineStore } from "pinia";
 import { auth } from "../firebaseConfig.js";
 import { db } from "../firebaseConfig";
-import router from "../router"
+import router from "../router";
 
 export const useDatabaseStore = defineStore("database", {
   state: () => ({
     documents: [],
     loadingDoc: false,
-    loading:false,
+    loading: false,
   }),
   actions: {
     async getUrls() {
@@ -40,84 +40,87 @@ export const useDatabaseStore = defineStore("database", {
       }
     },
     async addUrl(name) {
-      this.loading = true
+      this.loading = true;
       try {
         const objetoDoc = {
           name: name,
           short: nanoid(6),
-          user: auth.currentUser.uid
+          user: auth.currentUser.uid,
         };
         const docRef = await addDoc(collection(db, "urls"), objetoDoc);
         this.documents.push({
           ...objetoDoc,
-          id: docRef.id
-        })
+          id: docRef.id,
+        });
       } catch (error) {
-	return error.code
-        console.log(error);
+        return error.code;
       } finally {
-	this.loading = false
+        this.loading = false;
       }
     },
     async readUrl(id) {
       try {
-        const docRef = doc(db, "urls", id)
-        const docSnap = await getDoc(docRef)
+        const docRef = doc(db, "urls", id);
+        const docSnap = await getDoc(docRef);
         if (!docSnap.exists()) {
-          throw new Error("no existe el doc")
+          throw new Error("no existe el doc");
         }
         if (docSnap.data().user !== auth.currentUser.uid) {
-          throw new Error("No le pertenece ese documento")
+          throw new Error("No le pertenece ese documento");
         }
-        return docSnap.data().name
+        return docSnap.data().name;
       } catch (err) {
-        console.log(err.message)
+        console.log(err.message);
       } finally {
-
       }
     },
     async deleteUrl(id) {
+      this.loading = true;
       try {
-        const docRef = doc(db, 'urls', id)
-        const docSnap = await getDoc(docRef)
-        console.log(docSnap)
+        const docRef = doc(db, "urls", id);
+        const docSnap = await getDoc(docRef);
+        console.log(docSnap);
         if (!docSnap.exists()) {
-          throw new Error("no existe el doc")
+          throw new Error("no existe el doc");
         }
         if (docSnap.data().user !== auth.currentUser.uid) {
-          throw new Error("No le pertenece ese documento")
+          throw new Error("No le pertenece ese documento");
         }
 
-        await deleteDoc(docRef)
-        this.documents = this.documents.filter(x => x.id !== id)
+        await deleteDoc(docRef);
+        this.documents = this.documents.filter((x) => x.id !== id);
       } catch (error) {
-        console.log(error.message)
+        return error.message;
       } finally {
-
+        this.loading = false;
       }
     },
     async updateUrl(id, name) {
+      this.loading = true;
       try {
-        const docRef = doc(db, 'urls', id)
-        const docSnap = await getDoc(docRef)
+        const docRef = doc(db, "urls", id);
+        const docSnap = await getDoc(docRef);
 
         if (!docSnap.exists()) {
-          throw new Error("no existe el doc")
+          throw new Error("no existe el doc");
         }
         if (docSnap.data().user !== auth.currentUser.uid) {
-          throw new Error("No le pertenece ese documento")
+          throw new Error("No le pertenece ese documento");
         }
 
         await updateDoc(docRef, {
-          name: name
-        })
-        this.documents = this.documents.map(x => x.id === id ? {...x,name:name} : x)
-        router.push("/")
+          name: name,
+        });
+        this.documents = this.documents.map((x) =>
+          x.id === id ? { ...x, name: name } : x
+        );
+        router.push("/");
       } catch (error) {
-        console.log(error)
+        console.log(error);
+        return error.message;
       } finally {
-
+        this.loading = false;
       }
-    }
+    },
   },
 });

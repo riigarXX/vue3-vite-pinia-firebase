@@ -3,7 +3,9 @@ import { onMounted, reactive } from "vue";
 import { useDatabaseStore } from "../stores/database";
 import { useRoute } from "vue-router";
 import { message } from "ant-design-vue";
+import { useRouter } from "vue-router";
 
+const router = useRouter();
 const route = useRoute();
 const databaseStore = useDatabaseStore();
 const formState = reactive({
@@ -28,8 +30,10 @@ const props = defineProps({
   msg: String,
 });
 
-const handleUpdate = () => {
-  databaseStore.updateUrl(route.params.id, formState.url);
+const handleUpdate = async () => {
+  const res = await databaseStore.updateUrl(route.params.id, formState.url);
+  if (!res) return message.success("Url editada con exito");
+  return error.message(res);
 };
 
 onMounted(async () => {
@@ -42,7 +46,7 @@ onMounted(async () => {
     autocomplete="off"
     layout="vertical"
     :model="formState"
-    @finish="onFinish"
+    @finish="msg === 'Agregar' ? onFinish() : handleUpdate()"
   >
     <a-form-item
       name="url"
@@ -58,15 +62,27 @@ onMounted(async () => {
     >
       <a-input v-model:value="formState.url" />
     </a-form-item>
-    <a-form-item>
-      <a-button
-        type="primary"
-        html-type="submit"
-        :loading="databaseStore.loading"
-        :disabled="databaseStore.loading"
-      >
-        {{ msg }}
-      </a-button>
+    <a-form-item layout="horizontal">
+      <a-space>
+        <a-button
+          type="primary"
+          html-type="submit"
+          :loading="databaseStore.loading"
+          :disabled="databaseStore.loading"
+        >
+          {{ msg }}
+        </a-button>
+
+        <a-button
+          v-if="msg !== 'Agregar'"
+          type="primary"
+          :loading="databaseStore.loading"
+          :disabled="databaseStore.loading"
+          @click="router.push('/')"
+        >
+          Voler
+        </a-button>
+      </a-space>
     </a-form-item>
   </a-form>
 </template>
