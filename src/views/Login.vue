@@ -44,6 +44,7 @@
             type="primary"
             html-type="submit"
             :disabled="userStore.loadingUser"
+            :loading="userStore.loadingUser"
           >
             Login en firebase!
           </a-button>
@@ -56,7 +57,7 @@
 <script setup>
 import { reactive } from "vue";
 import { useUserStore } from "../stores/user";
-
+import { message } from "ant-design-vue";
 const userStore = useUserStore();
 
 const formState = reactive({
@@ -65,10 +66,24 @@ const formState = reactive({
 });
 
 const onFinish = async (values) => {
-  await userStore.loginUser(formState.email, formState.password);
+  const res = await userStore.loginUser(formState.email, formState.password);
+  if (!res) {
+    message.success("Bienvenido a tu escritorio");
+    return;
+  }
+  switch (res) {
+    case "auth/user-not-found":
+      message.error("No existe esta cuenta 🌶️");
+      break;
+    case "auth/wrong-password":
+      message.error("Contraseña o correo invalido 🌶️");
+      break;
+    default:
+      message.error("Error desde firebase 🌶️");
+      break;
+  }
 };
 const onFinishFailed = async (values) => {};
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

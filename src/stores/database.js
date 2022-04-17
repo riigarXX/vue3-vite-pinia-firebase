@@ -19,6 +19,7 @@ export const useDatabaseStore = defineStore("database", {
   state: () => ({
     documents: [],
     loadingDoc: false,
+    loading:false,
   }),
   actions: {
     async getUrls() {
@@ -39,6 +40,7 @@ export const useDatabaseStore = defineStore("database", {
       }
     },
     async addUrl(name) {
+      this.loading = true
       try {
         const objetoDoc = {
           name: name,
@@ -51,8 +53,10 @@ export const useDatabaseStore = defineStore("database", {
           id: docRef.id
         })
       } catch (error) {
+	return error.code
         console.log(error);
       } finally {
+	this.loading = false
       }
     },
     async readUrl(id) {

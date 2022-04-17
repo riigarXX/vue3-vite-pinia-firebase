@@ -25,9 +25,9 @@ export const useUserStore = defineStore("userStore", {
           password
         );
         this.userData = { email: user.email, uid: user.uid };
-        router.push("/");
+        router.push("/login");
       } catch (error) {
-        console.log(error);
+	return error.code
       } finally {
         this.loadingUser = false;
       }
@@ -43,7 +43,7 @@ export const useUserStore = defineStore("userStore", {
         this.userData = { email: user.email, uid: user.uid };
         router.push("/");
       } catch (error) {
-        console.log(error);
+	return error.code
       } finally {
         this.loadingUser = false;
       }

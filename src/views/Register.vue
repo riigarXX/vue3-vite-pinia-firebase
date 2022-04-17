@@ -57,6 +57,7 @@
           <a-button
             type="primary"
             html-type="submit"
+            :loading="userStore.loadingUser"
             :disabled="userStore.loadingUser"
           >
             Registrate en firebase!
@@ -70,6 +71,7 @@
 <script setup>
 import { reactive } from "vue";
 import { useUserStore } from "../stores/user";
+import { message } from "ant-design-vue";
 
 const userStore = useUserStore();
 
@@ -88,8 +90,19 @@ const validatePass = async (_rule, value) => {
   return Promise.resolve();
 };
 const onFinish = async (values) => {
-  console.log("Success ->", values);
-  await userStore.registerUser(formState.email, formState.password);
+  const res = await userStore.registerUser(formState.email, formState.password);
+  if (!res) {
+    message.success("Revisa tu correo electronico");
+    return;
+  }
+  switch (res) {
+    case "auth/email-already-in-use":
+      alert("Email ya en uso");
+      break;
+    default:
+      alert("fallo algo desde firebase");
+      break;
+  }
 };
 
 const onFinishFailed = async (values) => {
@@ -97,5 +110,4 @@ const onFinishFailed = async (values) => {
 };
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
