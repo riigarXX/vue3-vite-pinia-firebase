@@ -1,14 +1,12 @@
 <template>
   <a-layout>
     <a-layout-header v-if="!userStore.loadingSession">
-      <a-menu
-        theme="dark"
-        mode="horizontal"
-        :style="{ lineHeight: '64px' }"
-        v-model:selectedKeys="selectedKeys"
-      >
+      <a-menu theme="dark" mode="horizontal" :style="{ lineHeight: '64px' }" v-model:selectedKeys="selectedKeys">
         <a-menu-item key="home" v-if="userStore.userData">
           <router-link to="/">Home</router-link>
+        </a-menu-item>
+        <a-menu-item key="perfil" v-if="userStore.userData">
+          <router-link to="/perfil">Perfil</router-link>
         </a-menu-item>
         <a-menu-item key="login" v-if="!userStore.userData">
           <router-link to="/login">Login</router-link>

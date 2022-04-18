@@ -4,10 +4,12 @@ import {
   onAuthStateChanged,
   signInWithEmailAndPassword,
   signOut,
+  updateProfile,
 } from "firebase/auth";
-import { auth } from "../firebaseConfig";
+import { auth, db } from "../firebaseConfig";
 import router from "../router";
 import { useDatabaseStore } from "./database";
+import { doc, getDoc, setDoc } from "firebase/firestore/lite";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -27,9 +29,36 @@ export const useUserStore = defineStore("userStore", {
         this.userData = { email: user.email, uid: user.uid };
         router.push("/login");
       } catch (error) {
-	return error.code
+        return error.code;
       } finally {
         this.loadingUser = false;
+      }
+    },
+    async updateUser(displayName) {
+      try {
+        await updateProfile(auth.currentUser, {
+          displayName: displayName,
+        });
+        this.setUser(auth.currentUser);
+      } catch (error) {
+        console.log(error);
+        return error.code;
+      }
+    },
+    async setUser(user) {
+      try {
+        const docRef = doc(db, "users", user.uid);
+
+        this.userData = {
+          email: user.email,
+          uid: user.uid,
+          displayName: user.displayName,
+          photoURl: user.photoURL,
+        };
+        await setDoc(docRef, this.userData);
+      } catch (error) {
+        console.log(error);
+      } finally {
       }
     },
     async loginUser(email, password) {
@@ -40,21 +69,21 @@ export const useUserStore = defineStore("userStore", {
           email,
           password
         );
-        this.userData = { email: user.email, uid: user.uid };
+        await this.setUser(user);
         router.push("/");
       } catch (error) {
-	return error.code
+        return error.code;
       } finally {
         this.loadingUser = false;
       }
     },
     async logoutUser() {
-      const databaseStore = useDatabaseStore()
-      databaseStore.$reset()
+      const databaseStore = useDatabaseStore();
+      databaseStore.$reset();
       try {
-        await signOut(auth);
-        this.userData = null;
         router.push("/login");
+        await signOut(auth);
+        //this.userData = null;
       } catch (error) {
         console.log(error);
       } finally {
@@ -64,13 +93,19 @@ export const useUserStore = defineStore("userStore", {
       return new Promise((resolve, reject) => {
         const unsuscribe = onAuthStateChanged(
           auth,
-          (user) => {
+          async (user) => {
+            console.log(user);
             if (user) {
-              this.userData = { email: user.email, uid: user.uid };
+              this.userData = {
+                email: user.email,
+                uid: user.uid,
+                displayName: user.displayName,
+                photoURl: user.photoURL,
+              };
             } else {
               this.userData = null;
-              const databaseStore = useDatabaseStore()
-              databaseStore.$reset()
+              const databaseStore = useDatabaseStore();
+              databaseStore.$reset();
             }
             resolve(user);
           },
