@@ -6,10 +6,11 @@ import {
   signOut,
   updateProfile,
 } from "firebase/auth";
-import { auth, db } from "../firebaseConfig";
+import { auth, db, storage } from "../firebaseConfig";
 import router from "../router";
 import { useDatabaseStore } from "./database";
 import { doc, getDoc, setDoc } from "firebase/firestore/lite";
+import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 
 export const useUserStore = defineStore("userStore", {
   state: () => ({
@@ -45,6 +46,21 @@ export const useUserStore = defineStore("userStore", {
         return error.code;
       }
     },
+    async updateUserPhoto(photoURL) {
+      console.log(photoURL);
+      try {
+        const storageRef = ref(storage,`${this.userData.uid}/perfil`)
+        await uploadBytes(storageRef,photoURL)
+        const url = await getDownloadURL(storageRef)
+        await updateProfile(auth.currentUser, {
+          photoURL: url,
+        });
+        this.setUser(auth.currentUser);
+      } catch (error) {
+        console.log(error)
+        return error.code
+      }
+    },
     async setUser(user) {
       try {
         const docRef = doc(db, "users", user.uid);
@@ -53,7 +69,7 @@ export const useUserStore = defineStore("userStore", {
           email: user.email,
           uid: user.uid,
           displayName: user.displayName,
-          photoURl: user.photoURL,
+          photoURL: user.photoURL,
         };
         await setDoc(docRef, this.userData);
       } catch (error) {
@@ -100,7 +116,7 @@ export const useUserStore = defineStore("userStore", {
                 email: user.email,
                 uid: user.uid,
                 displayName: user.displayName,
-                photoURl: user.photoURL,
+                photoURL: user.photoURL,
               };
             } else {
               this.userData = null;
