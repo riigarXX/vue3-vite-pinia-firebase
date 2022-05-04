@@ -35,8 +35,18 @@ export const useUserStore = defineStore("userStore", {
         this.loadingUser = false;
       }
     },
-    async updateUser(displayName) {
+    async updateUser(displayName, photoURL) {
+      this.loadingUser = true;
       try {
+        if (photoURL) {
+          const storageRef = ref(storage, `perfiles/${this.userData.uid}`);
+          await uploadBytes(storageRef, photoURL);
+          const url = await getDownloadURL(storageRef);
+          await updateProfile(auth.currentUser, {
+            photoURL: url,
+          });
+          this.setUser(auth.currentUser);
+        }
         await updateProfile(auth.currentUser, {
           displayName: displayName,
         });
@@ -44,21 +54,8 @@ export const useUserStore = defineStore("userStore", {
       } catch (error) {
         console.log(error);
         return error.code;
-      }
-    },
-    async updateUserPhoto(photoURL) {
-      console.log(photoURL);
-      try {
-        const storageRef = ref(storage,`${this.userData.uid}/perfil`)
-        await uploadBytes(storageRef,photoURL)
-        const url = await getDownloadURL(storageRef)
-        await updateProfile(auth.currentUser, {
-          photoURL: url,
-        });
-        this.setUser(auth.currentUser);
-      } catch (error) {
-        console.log(error)
-        return error.code
+      } finally {
+        this.loadingUser = false;
       }
     },
     async setUser(user) {

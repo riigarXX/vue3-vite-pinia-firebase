@@ -4,20 +4,13 @@
     <p>{{ userStore.userData?.email }}</p>
     <Form msg="Agregar" />
     <p v-if="useDatabase.loadingDoc">Loading docs...</p>
-    <a-space
-      direction="vertical"
-      v-if="!useDatabase.loadingDoc"
-      style="width: 100%"
-    >
-      <a-card
-        v-for="item in useDatabase.documents"
-        :key="item.id"
-        :title="item.short"
-      >
+    <a-space direction="vertical" v-if="!useDatabase.loadingDoc" style="width: 100%">
+      <a-card v-for="item in useDatabase.documents" :key="item.id" :title="item.short">
         <template #extra>
           <a-space>
             <DeleteButton :idItem="item.id" />
             <EditButton :idItem="item.id" />
+            <CopyButton :idItem='item.id' />
           </a-space>
         </template>
         <p>{{ item.name }}</p>

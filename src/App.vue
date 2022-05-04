@@ -1,12 +1,7 @@
 <template>
   <a-layout>
     <a-layout-header v-if="!userStore.loadingSession">
-      <a-menu
-        theme="dark"
-        mode="horizontal"
-        :style="{ lineHeight: '64px' }"
-        v-model:selectedKeys="selectedKeys"
-      >
+      <a-menu theme="dark" mode="horizontal" :style="{ lineHeight: '64px' }" v-model:selectedKeys="selectedKeys">
         <a-menu-item key="home" v-if="userStore.userData">
           <router-link to="/">Home</router-link>
         </a-menu-item>
@@ -27,7 +22,7 @@
     <a-layout-content style="padding: 0 50px">
       <div class="container">
         <div v-if="userStore.loadingSession">Loading User</div>
-        <router-view></router-view>
+        <router-view v-else></router-view>
       </div>
     </a-layout-content>
   </a-layout>
@@ -56,6 +51,5 @@ watch(
   padding: 24px;
   min-height: calc(100vh - 64px);
 }
-
 </style>
-vue
+

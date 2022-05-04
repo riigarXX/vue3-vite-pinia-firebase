@@ -4,8 +4,8 @@
   <div align="center" class="mb-2">
     <a-avatar :src='userStore.userData.photoURL' :size='150' />
   </div>
-  <a-row >
-    <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }" >
+  <a-row>
+    <a-col :xs="{ span: 24 }" :sm="{ span: 12, offset: 6 }">
 
       <a-form name="basicPerfil" layout="vertical" autocomplete="off" :model="userStore.userData" @finish="onFinish">
         <a-form-item name="email" label="Tu correo (no modificable)" :rules="[
@@ -28,7 +28,7 @@
           <a-input v-model:value="userStore.userData.displayName" />
         </a-form-item>
         <a-upload v-model:file-list="fileList" list-type="picture" :before-upload="beforeUpload" :max-count="1"
-          @change="handleChange" >
+          @change="handleChange">
           <a-button>
             Subir foto de perfil
           </a-button>
@@ -89,29 +89,26 @@ const handleRemove = file => {
   fileList.value = newFileList
 }
 const onFinish = async () => {
-  const error = await userStore.updateUser(userStore.userData.displayName);
+  const error = await userStore.updateUser(userStore.userData.displayName, fileList.value[0].originFileObj);
 
   if (fileList.value[0]) {
-    const error = await userStore.updateUserPhoto(fileList.value[0].originFileObj);
     if (error) {
       return message.error("Problemas al subir la foto de perfil");
     }
     message.success("Foto de perfil actualizada");
   }
-
-
-
-if (!error) {
-  return message.success("Se actualizo tu informacion displayName");
-}
-return message.error("Error al actualizar la informacio");
+  if (!error) {
+    return message.success("Se actualizo tu informacion displayName");
+  }
+  return message.error("Error al actualizar la informacio");
 };
 </script>
 <style>
-.mb-2{
+.mb-2 {
   margin-bottom: 2rem;
 }
-.mt-2{
+
+.mt-2 {
   margin-top: 2rem;
 }
 </style>
